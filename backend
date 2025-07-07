@@ -1,0 +1,128 @@
+const express = require("express");
+const puppeteer = require("puppeteer");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const nodemailer = require("nodemailer");
+const axios = require("axios");
+require("dotenv").config();
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+const TWO_CAPTCHA_API_KEY = process.env.TWO_CAPTCHA_API_KEY;
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
+
+// Configuração do Nodemailer para envio de e-mails
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// Função para resolver o reCAPTCHA usando 2Captcha
+const solveRecaptcha = async (page) => {
+  const siteKey = "CHAVE_DO_RECAPTCHA"; // Capturar do site Siscomex
+  const pageUrl = "https://portalunico.siscomex.gov.br/due/x/#/consulta/consulta-filtro?perfil=publico";
+
+  const response = await axios.get(
+    `http://2captcha.com/in.php?key=${TWO_CAPTCHA_API_KEY}&method=userrecaptcha&googlekey=${siteKey}&pageurl=${pageUrl}`
+  );
+
+  const captchaId = response.data.split("|")[1];
+
+  await new Promise((resolve) => setTimeout(resolve, 20000)); // Espera 20s antes de buscar a resposta
+
+  let captchaSolution;
+  while (!captchaSolution) {
+    const result = await axios.get(
+      `http://2captcha.com/res.php?key=${TWO_CAPTCHA_API_KEY}&action=get&id=${captchaId}`
+    );
+
+    if (result.data.includes("OK|")) {
+      captchaSolution = result.data.split("|")[1];
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+  }
+
+  await page.evaluate(
+    (solution) => {
+      document.querySelector("#g-recaptcha-response").value = solution;
+    },
+    captchaSolution
+  );
+
+  console.log("reCAPTCHA resolvido!");
+};
+
+// Função para envio de e-mail
+const sendEmailNotification = async (dueData) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: dueData.clientEmail,
+    subject: "DU-E Averbado",
+    text: `Número do MIC: ${dueData.micNumber}\nData de Emissão: ${dueData.micDate}\nNúmero da DU-E: ${dueData.dueNumber}\nStatus: Averbado`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+// Função para envio de mensagem no WhatsApp via Twilio
+const sendWhatsAppNotification = async (dueData) => {
+  const client = require("twilio")(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+
+  await client.messages.create({
+    from: `whatsapp:${TWILIO_PHONE_NUMBER}`,
+    to: `whatsapp:${dueData.clientPhone}`,
+    body: `DU-E Averbado!\nNúmero do MIC: ${dueData.micNumber}\nData de Emissão: ${dueData.micDate}\nNúmero da DU-E: ${dueData.dueNumber}\nStatus: Averbado`,
+  });
+};
+
+app.post("/api/checkStatus", async (req, res) => {
+  const { dueNumber, micNumber, micDate, clientEmail, clientPhone } = req.body;
+  if (!dueNumber) {
+    return res.status(400).json({ error: "Número da DU-E é obrigatório" });
+  }
+
+  try {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.goto(
+      "https://portalunico.siscomex.gov.br/due/x/#/consulta/consulta-filtro?perfil=publico"
+    );
+
+    await page.type('input[placeholder="Digite uma DU-E"]', dueNumber);
+
+    // Resolver o reCAPTCHA automaticamente
+    await solveRecaptcha(page);
+
+    await page.click("#consultarButton");
+    await page.waitForSelector(".status-due");
+
+    const status = await page.evaluate(() => {
+      return document.querySelector(".status-due").innerText;
+    });
+
+    await browser.close();
+
+    if (status === "Averbado") {
+      const dueData = { micNumber, micDate, dueNumber, clientEmail, clientPhone };
+      await sendEmailNotification(dueData);
+      await sendWhatsAppNotification(dueData);
+    }
+
+    res.json({ status });
+  } catch (error) {
+    console.error("Erro ao consultar DU-E", error);
+    res.status(500).json({ error: "Erro ao consultar DU-E" });
+  }
+});
+
+app.listen(5000, () => {
+  console.log("Servidor rodando na porta 5000");
+});
