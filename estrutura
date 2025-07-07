@@ -1,0 +1,72 @@
+import React, { useState, useEffect } from "react";
+import { Table, Button, Input } from "@/components/ui";
+import axios from "axios";
+
+const Dashboard = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get("/api/getDUStatus");
+        setData(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados", error);
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 300000); // Atualiza a cada 5 min
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleCheckStatus = async (dueNumber) => {
+    try {
+      const response = await axios.post("/api/checkStatus", { dueNumber });
+      setData((prevData) =>
+        prevData.map((row) =>
+          row.dueNumber === dueNumber ? { ...row, status: response.data.status } : row
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao verificar status", error);
+    }
+  };
+
+  return (
+    <div className="p-5">
+      <h1 className="text-xl font-bold mb-4">Painel de Monitoramento de DU-E</h1>
+      <Table>
+        <thead>
+          <tr>
+            <th>Número de MIC</th>
+            <th>Data de Emissão</th>
+            <th>Nome do Exportador</th>
+            <th>Número da DU-E</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, index) => (
+            <tr key={index}>
+              <td>{row.micNumber}</td>
+              <td>{row.micDate}</td>
+              <td>{row.exporter}</td>
+              <td>{row.dueNumber}</td>
+              <td className="font-bold text-blue-500">{row.status}</td>
+              <td>
+                <Button onClick={() => handleCheckStatus(row.dueNumber)}>Atualizar</Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  );
+};
+
+export default Dashboard;

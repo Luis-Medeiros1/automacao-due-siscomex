@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta DU-E - Siscomex</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Consulta de DU-E no Siscomex</h2>
+    
+    <table id="dueTable">
+        <thead>
+            <tr>
+                <th>Número do MIC</th>
+                <th>Data de Emissão do MIC</th>
+                <th>Nome do Exportador</th>
+                <th>Número da DU-E</th>
+                <th>Status</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input type="text" placeholder="123456"></td>
+                <td><input type="date"></td>
+                <td><input type="text" placeholder="Exportador XYZ"></td>
+                <td><input type="text" placeholder="DU-E123456"></td>
+                <td class="status">Pendente</td>
+                <td><button onclick="consultarDUE(this)">Consultar</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="adicionarLinha()">Adicionar Nova Linha</button>
+
+    <script>
+        function adicionarLinha() {
+            const table = document.getElementById("dueTable").getElementsByTagName("tbody")[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="123456"></td>
+                <td><input type="date"></td>
+                <td><input type="text" placeholder="Exportador XYZ"></td>
+                <td><input type="text" placeholder="DU-E123456"></td>
+                <td class="status">Pendente</td>
+                <td><button onclick="consultarDUE(this)">Consultar</button></td>
+            `;
+        }
+
+        async function consultarDUE(button) {
+            const row = button.parentElement.parentElement;
+            const micNumber = row.cells[0].querySelector("input").value;
+            const micDate = row.cells[1].querySelector("input").value;
+            const exporterName = row.cells[2].querySelector("input").value;
+            const dueNumber = row.cells[3].querySelector("input").value;
+            const statusCell = row.cells[4];
+
+            if (!dueNumber) {
+                alert("Por favor, insira um número de DU-E.");
+                return;
+            }
+
+            statusCell.textContent = "Consultando...";
+
+            const response = await fetch("http://localhost:5000/api/checkStatus", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ micNumber, micDate, exporterName, dueNumber })
+            });
+
+            const data = await response.json();
+            statusCell.textContent = data.status || "Erro";
+        }
+    </script>
+
+</body>
+</html>
