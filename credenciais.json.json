@@ -1,13 +1,1 @@
-{
-  "type": "service_account",
-  "project_id": "automacaodu-e",
-  "private_key_id": "1feba8db5fa6df25a1aa531f0b7f893b102690be",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCmRgbm8xEHd9yc\nJ593QpT0dTzr7CQDhhkbdUZy9i3cQJZ/LhBx4AJ9/uiu7+uKbWEvOdaaClZbXyma\nenhI/acCXHQKLtvVucnlUJSUWpYaFNP2iMUh6NOxuRkHvGg29jeWGtUap5NdO2I8\nRGj+fquRCIynSQJGW+JZQr7tkg6DKVbnIGHndhbTnW+IhpIahafoWAsjpY98tLif\ng0BzS4CFLKBw6YbUegwPBDmRk0UeYIpJ2w04f9UAw45lMGTDx3FG9hq6RPwYf7Ox\nAZpvaixMCEHZm/sSKMEN3q0APP9DenPbmEPWWbNP41GCTYrhTxaJDoQaYMobz4jB\nU/oNxj2tAgMBAAECggEABKijIl7um/c1iPGKRAjrTAMp6xFRfADKnMyXJfr0U37C\nyLr1bn9gin+1LMufnaANcEmOVAAUpdg/ferPCnqC7qvA+5UPB0i+max9kT+Ng5sQ\nSlDQNzBDGDBvvVn/0IRrD8teK7JEzICwsrAXAgRyEaz75ecDh42lBKu8VkM4oV+g\nVLZu5pPQSahKwi7fCc1Bmz7bGcPoK7WJr1Jq/uy/tKTNiAq05XM6jabIHxk8JCDx\n4KEjdXsvLc2pj6v4JxmlbCJP0S83eiIiHYPJQL/ioU4nS6ZQyQ2VAvV0lo1lQXto\nkujeWlnfpQiTX6qk1lYlJrGbSddv3QCauXW8H15ziQKBgQDVBPUKT6Y9U6KKweAS\nn9FgCjyAQPf2G+sprSYK3/yNHe2qoNu15WaINDWlNxgsFo7uooylFejt4RT51qq4\ndxoCdH8HXvJWcw5Bot30XaPi6dilBimOjE+vtrihPbmS6MSjid8SzJDTFpuGRDNH\nsG1aY9FvfRwxp5fpUe+Kgh7IhQKBgQDH0oSfE4wc6TEsKOJ8Lc+VfIXMQQafz1Bj\nFeaF71uMtGA4lD8tcs45vNsWuQYhYSvptyCqnoJRHYsMaBvzmbJ7yJGkEc/RnhvG\nhRLYxsj8trx6GrUJzQCv9CJPX/MWEuOIr3zbr5YzA5wnFUBtOifB9CD0w+yPv7/n\nXTRTgju9CQKBgQCv4/H5W58mkEJsVH2So0gdBxbBx+N24cKhnQkGfcBpPUcbVstU\nPGEXIhURoJZjARVwUePUBG1azjmlue0pd56QXGTvTyTG4SXqaHLg7dj+6pwqVxZF\nT/IUYsm8ydzLQ0vqxVLekO8cfVRZ30KAdVs2AanTZvi6v2meDDvAoISOiQKBgGyl\nIKihZzAc9jhtbl9YRSKhFtpsjJ59iNanBLTT5LIHLL32lLcwUcKA1ZpwNU4W2Fp1\n0FQUZQSXjI/NV01Gxw2Yit9rM9RkI/P3TL0CsCr/bFDzjnVqujHxCmqf37qjwIUD\n7V5BBOht0QxK+MGqug0xoG2UzV2HQ18XhSjWiYaJAoGBALYh5oX+6PMM9y4Nlr4t\nIxPU0iy24FLVZy9YDqCMIb7QNLFgoCqi4Gffiag/h6WiaLB96wfH785Fwz/ZfuXT\nk0liwXuW1Lla9t1TTdufEhJ4jYlThtKvWVkn8YMp6WCrP31bS5UYSADhvzcwX3Ez\nkeHQ+qwBSAuQ3FWtA6MQ3N5v\n-----END PRIVATE KEY-----\n",
-  "client_email": "automacao-du-e@automacaodu-e.iam.gserviceaccount.com",
-  "client_id": "110532576635734440028",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/automacao-du-e%40automacaodu-e.iam.gserviceaccount.com",
-  "universe_domain": "googleapis.com"
-}
+removido por questões de dados privados.
